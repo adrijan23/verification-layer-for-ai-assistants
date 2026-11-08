@@ -10,7 +10,7 @@ export default function StagePage() {
       <header className="flex items-center gap-3 border-b border-ink-800 px-4 py-2 text-xs text-ink-400">
         <ShieldMark className="h-5 w-5" />
         <span className="font-semibold text-ink-100">{env.displayName}</span>
-        <span>Live demo</span>
+        {env.demoTools && <span>Live demo</span>}
         <span className="ml-auto hidden gap-6 md:flex">
           <span>① The assistant</span>
           <span>② The customer’s phone</span>

@@ -62,7 +62,7 @@ const SCRIPTED: Record<string, { label: string; prompt: string; intent: Intent }
 
 const app = new Hono();
 
-app.get('/', (c) => c.html(uiHtml(Object.entries(SCRIPTED).map(([id, s]) => ({ id, label: s.label })), env.hasLlm)));
+app.get('/', (c) => c.html(uiHtml(Object.entries(SCRIPTED).map(([id, s]) => ({ id, label: s.label })), env.hasLlm, { demoTools: env.demoTools, agentTag: env.agentTag })));
 app.get('/api/health', (c) => c.json({ ok: true, busy, llm: env.hasLlm, model: env.model }));
 
 app.get('/api/stream', (c) =>

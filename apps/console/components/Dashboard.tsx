@@ -167,6 +167,7 @@ export function Dashboard({ initial, compact }: { initial: DashboardSnapshot; co
           >
             {chainOk ? `Chain verified ✓ · ${snap.chain.count} events` : `Chain broken at #${snap.chain.brokenAtSeq}`}
           </span>
+          {snap.demoTools && (
           <button
             data-testid="reset-demo"
             disabled={busy === 'reset'}
@@ -180,6 +181,7 @@ export function Dashboard({ initial, compact }: { initial: DashboardSnapshot; co
           >
             {busy === 'reset' ? 'Resetting…' : 'Reset demo'}
           </button>
+          )}
         </div>
       </header>
 

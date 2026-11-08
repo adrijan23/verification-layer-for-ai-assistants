@@ -10,6 +10,8 @@ export const env = {
   headless: process.env.AGENT_HEADLESS !== 'false',
   model: process.env.ANTHROPIC_MODEL || 'claude-sonnet-5-5',
   hasLlm: Boolean(process.env.ANTHROPIC_API_KEY),
+  /** Presenter helpers (scenario buttons, mode badge, session reset) only when DEMO_TOOLS=true. */
+  demoTools: process.env.DEMO_TOOLS === 'true',
   port: Number(process.env.AGENT_PORT || 3100),
 };
 
