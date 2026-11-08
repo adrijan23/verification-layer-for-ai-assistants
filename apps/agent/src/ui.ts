@@ -1,5 +1,6 @@
 /** Chat UI for the demo assistant ("Instinct"): chat + live view of the browser the agent drives. */
-export function uiHtml(steps: { id: string; label: string }[], llm: boolean): string {
+export function uiHtml(steps: { id: string; label: string }[], llm: boolean, opts: { demoTools: boolean; agentTag: string }): string {
+  const tools = opts.demoTools;
   const buttons = steps
     .map(
       (s, i) =>
@@ -57,14 +58,14 @@ kbd{display:inline-grid;place-items:center;min-width:20px;height:20px;border-rad
 <div class="app">
   <section class="chat">
     <div class="head"><span class="logo">✦</span><div><b>Instinct</b><small>Your personal assistant</small></div>
-      <span class="llm" title="Intent parsing">${llm ? 'Claude intent parsing' : 'Scripted mode'}</span></div>
+      ${tools ? `<span class="llm" title="Intent parsing">${llm ? 'Claude intent parsing' : 'Scripted mode'}</span>` : ''}</div>
     <div class="msgs" id="msgs" data-testid="agent-chat"></div>
-    <div class="steps">${buttons}</div>
+    ${tools ? `<div class="steps">${buttons}</div>` : ''}
     <form class="compose" id="form"><input id="text" data-testid="agent-input" autocomplete="off" placeholder="Ask Instinct… e.g. Book me a flight to Paris this Friday">
       <button data-testid="agent-send">Send</button></form>
-    <div style="padding:0 12px 10px;display:flex;justify-content:space-between;align-items:center">
+    ${tools ? `<div style="padding:0 12px 10px;display:flex;justify-content:space-between;align-items:center">
       <button class="reset" id="reset" data-testid="agent-reset"><kbd>0</kbd> New agent session</button>
-      <span class="ua">UA: …InstinctDemo/1.0</span></div>
+      <span class="ua">UA: …${opts.agentTag}</span></div>` : ''}
   </section>
   <section class="view">
     <div style="display:flex;flex-direction:column;min-height:0;flex:1">
@@ -91,8 +92,8 @@ kbd{display:inline-grid;place-items:center;min-width:20px;height:20px;border-rad
   function post(u,b){return fetch(u,{method:'POST',headers:{'content-type':'application/json'},body:b?JSON.stringify(b):undefined});}
   steps.forEach(function(s){s.addEventListener('click',function(){post('/api/run/'+s.dataset.step);});});
   document.getElementById('form').addEventListener('submit',function(e){e.preventDefault();var t=document.getElementById('text');if(!t.value.trim())return;post('/api/chat',{text:t.value});t.value='';});
-  document.getElementById('reset').addEventListener('click',function(){post('/api/reset');});
-  document.addEventListener('keydown',function(e){if(e.target&&e.target.tagName==='INPUT')return;
+  var rb=document.getElementById('reset');if(rb)rb.addEventListener('click',function(){post('/api/reset');});
+  if(${tools ? 'true' : 'false'})document.addEventListener('keydown',function(e){if(e.target&&e.target.tagName==='INPUT')return;
     if(e.key==='0'){post('/api/reset');return;}var n=parseInt(e.key,10);if(n>=1&&n<=steps.length&&!steps[n-1].disabled)steps[n-1].click();});
 })();
 </script></body></html>`;
