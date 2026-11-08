@@ -1,0 +1,22 @@
+{
+  "name": "agentgate",
+  "private": true,
+  "version": "0.1.0",
+  "scripts": {
+    "dev": "concurrently -k -n console,gateway,flydemo,shopdemo,agent -c blue,magenta,red,yellow,green \"pnpm --filter @agentgate/console dev\" \"pnpm --filter @agentgate/gateway dev\" \"pnpm --filter @agentgate/flydemo dev\" \"pnpm --filter @agentgate/shopdemo dev\" \"pnpm --filter @agentgate/agent dev\"",
+    "build": "pnpm --filter @agentgate/console --filter @agentgate/flydemo --filter @agentgate/shopdemo build",
+    "start": "concurrently -k -n console,gateway,flydemo,shopdemo,agent -c blue,magenta,red,yellow,green \"pnpm --filter @agentgate/console start\" \"pnpm --filter @agentgate/gateway start\" \"pnpm --filter @agentgate/flydemo start\" \"pnpm --filter @agentgate/shopdemo start\" \"pnpm --filter @agentgate/agent start\"",
+    "seed": "pnpm --filter @agentgate/console seed",
+    "test": "pnpm --filter @agentgate/shared test",
+    "typecheck": "pnpm -r typecheck",
+    "e2e": "tsx tests/e2e/run.ts",
+    "tamper": "pnpm --filter @agentgate/console tamper"
+  },
+  "devDependencies": {
+    "@types/node": "20.17.6",
+    "concurrently": "9.1.0",
+    "playwright": "1.49.1",
+    "tsx": "4.19.2",
+    "typescript": "5.6.3"
+  }
+}

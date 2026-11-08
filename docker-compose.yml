@@ -1,0 +1,22 @@
+services:
+  agentgate:
+    build: .
+    image: agentgate:dev
+    container_name: agentgate
+    env_file: .env
+    environment:
+      REPO_ROOT: /app
+      DATABASE_PATH: /app/data/agentgate.db
+      AGENT_HEADLESS: "true"
+    ports:
+      - "3000:3000" # control plane (dashboard, /connect, /phone, /stage)
+      - "3100:3100" # agent runner (chat + live browser view)
+      - "4001:4001" # gateway -> FlyDemo
+      - "4002:4002" # gateway -> ShopDemo
+    volumes:
+      - agentgate-data:/app/data
+      - ./test-output:/app/test-output
+    shm_size: 1gb
+
+volumes:
+  agentgate-data:

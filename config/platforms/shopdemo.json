@@ -1,0 +1,46 @@
+{
+  "platformId": "shopdemo",
+  "displayName": "ShopDemo",
+  "upstream": "http://localhost:5002",
+  "listenPort": 4002,
+  "publicUrl": "http://localhost:4002",
+  "brand": { "color": "#14213D", "accent": "#F5A623", "mark": "SD" },
+  "loginPaths": ["/login", "/api/login"],
+  "actions": [
+    { "id": "product.search", "label": "Search products", "method": "GET", "path": "/api/products", "params": { "q": "query.q" }, "risk": "read" },
+    {
+      "id": "cart.add", "label": "Add items to my cart", "method": "POST", "path": "/api/cart",
+      "params": { "productId": "body.productId", "qty": "body.qty" },
+      "risk": "read"
+    },
+    {
+      "id": "order.place", "label": "Place orders", "method": "POST", "path": "/api/orders",
+      "params": { "amount": "body.amount", "currency": "body.currency" },
+      "risk": "money"
+    },
+    {
+      "id": "order.return", "label": "Return items and request refunds", "method": "POST", "path": "/api/orders/:id/return",
+      "params": { "refundAmount": "body.refundAmount", "orderId": "path.id" },
+      "risk": "money"
+    },
+    {
+      "id": "account.change_address", "label": "Change my shipping address", "method": "POST", "path": "/api/account/address",
+      "params": { "address": "body.address" },
+      "risk": "account"
+    }
+  ],
+  "guardrails": [
+    { "action": "account.change_address", "mode": "deny", "reason": "Platform policy: agents cannot change the shipping address (classic fraud pattern)" }
+  ],
+  "rateLimits": [
+    { "action": "product.search", "perMinute": 20 },
+    { "action": "*", "perMinute": 120 }
+  ],
+  "defaultGrant": [
+    { "action": "product.search", "mode": "allow" },
+    { "action": "cart.add", "mode": "allow" },
+    { "action": "order.place", "mode": "allow", "limit": { "amount": 150, "currency": "EUR" }, "overLimit": "confirm" },
+    { "action": "order.return", "mode": "confirm" },
+    { "action": "account.change_address", "mode": "deny" }
+  ]
+}

@@ -1,0 +1,47 @@
+{
+  "platformId": "flydemo",
+  "displayName": "FlyDemo Airlines",
+  "upstream": "http://localhost:5001",
+  "listenPort": 4001,
+  "publicUrl": "http://localhost:4001",
+  "brand": { "color": "#0B1F4B", "accent": "#E0312B", "mark": "FD" },
+  "loginPaths": ["/login", "/api/login"],
+  "actions": [
+    { "id": "flight.search", "label": "Search flights", "method": "GET", "path": "/api/flights", "params": { "from": "query.from", "to": "query.to" }, "risk": "read" },
+    {
+      "id": "flight.book", "label": "Buy tickets", "method": "POST", "path": "/api/bookings",
+      "when": { "body.payWith": "card" },
+      "params": { "amount": "body.total", "currency": "body.currency", "fareClass": "body.fareClass", "flightId": "body.flightId" },
+      "risk": "money"
+    },
+    {
+      "id": "miles.redeem", "label": "Spend my miles", "method": "POST", "path": "/api/bookings",
+      "when": { "body.payWith": "miles" },
+      "params": { "points": "body.miles", "fareClass": "body.fareClass", "flightId": "body.flightId" },
+      "risk": "money"
+    },
+    {
+      "id": "booking.cancel", "label": "Cancel trips and request refunds", "method": "POST", "path": "/api/bookings/:id/cancel",
+      "params": { "refundAmount": "body.refundAmount", "bookingId": "path.id" },
+      "risk": "money"
+    },
+    {
+      "id": "account.change_email", "label": "Change my account email", "method": "POST", "path": "/api/account/email",
+      "params": { "email": "body.email" },
+      "risk": "account"
+    }
+  ],
+  "guardrails": [
+    { "action": "account.change_email", "mode": "deny", "reason": "Platform policy: agents cannot change the account email (first step of account takeover)" }
+  ],
+  "rateLimits": [
+    { "action": "*", "perMinute": 60 }
+  ],
+  "defaultGrant": [
+    { "action": "flight.search", "mode": "allow" },
+    { "action": "flight.book", "mode": "allow", "limit": { "amount": 500, "currency": "EUR" }, "overLimit": "confirm" },
+    { "action": "miles.redeem", "mode": "confirm" },
+    { "action": "booking.cancel", "mode": "confirm" },
+    { "action": "account.change_email", "mode": "deny" }
+  ]
+}
